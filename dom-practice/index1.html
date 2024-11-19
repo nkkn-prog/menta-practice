@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul>
+        <li class="list">リスト</li>
+        <li class="list">リスト</li>
+        <li class="list">リスト</li>
+      </ul>
+      
+      <button id="myButton">listの数は？</button>
+      
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        const lists = document.getElementsByClassName('list');
+        console.log(lists)
+        const button = document.getElementById("myButton");
+        button.addEventListener("click", function() {
+          alert(lists.length);
+        });
+      });
+      </script>
+</body>
+</html>
