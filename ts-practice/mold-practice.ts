@@ -178,6 +178,7 @@ function giveId(obj) {
 //   }
 
 /**
+ * 2-5
  * ReactのuseState関数は、ステートを宣言するために使われます。
  * 引数は1つで、宣言されるステートの初期値です。
  * 返り値は2つの要素を持つ配列で、最初の要素は現在のステートの値です。
@@ -206,3 +207,131 @@ type UseStateUpdateArgument<T> = T | ((oldValue: T) => T);
 declare function useState<T>(
   initialValue: T
 ): [T, (updator: UseStateUpdateArgument<T>) => void];
+
+
+/**
+ * 3-1
+ * 以下のコードで定義される関数mapFromArrayは、オブジェクトの配列からMapを作って返す関数です。
+ * 配列から取り出した各オブジェクトをMapに登録しますが、その際にキーとして各オブジェクトの指定されたプロパティの値を用います。
+ * mapFromArrayに適切な型を付けてください。
+ */
+
+/**
+ * 〜自分の理解用〜
+ * 引数arrに入るデータ構造を確認すると、配列型で中身はオブジェクト構造になっている。
+ * キーとして各オブジェクトの指定されたプロパティの値を用いるので、T内のプロパティのうちkeyを指定するのでKを用いる。
+ * mapFromArray<T extends object, K extends keyof T>
+ * 
+ * そしてmapFromArrayの引数には、
+ * (arr:T[], key:K
+ * となる。
+ * 
+ * そして返り値の型は、(obj[key], obj)なので、Map<T[K], T>になる
+ * 
+ * まとめると、mapFromArray<T extends object, K extends keyof T>(arr:T[], key:K):Map<T[K], T>になる。
+ */
+
+function mapFromArray<T extends object ,K extends keyof T>(arr:T[], key:K):Map<T[K], T> {
+    const result = new Map();
+    for (const obj of arr) {
+      result.set(obj[key], obj);
+    }
+    return result;
+  }
+  
+  // 使用例
+  const data = [
+    { id: 1, name: "John Smith" },
+    { id: 2, name: "Mary Sue" },
+    { id: 100, name: "Taro Yamada" }
+  ];
+  const dataMap = mapFromArray(data, "id");
+  /*
+  dataMapは
+  Map {
+    1 => { id: 1, name: 'John Smith' },
+    2 => { id: 2, name: 'Mary Sue' },
+    100 => { id: 100, name: 'Taro Yamada' }
+  }
+  というMapになる
+  */
+
+
+/**
+ * 3-2. Partial
+ * PartialはTypeScriptの標準ライブラリに定義されている型で、オブジェクトの型を渡されると、その各プロパティを全部省略可能にするものです。
+ * MyPartialという名前でこれを実装してください。
+ */
+
+type MyPartial<T> = {[K in keyof T]?: T[K]} 
+// 使用例
+/*
+ * T1は { foo?: number; bar?: string; } となる
+ */
+type T1 = MyPartial<{
+    foo: number;
+    bar: string;
+  }>;
+  /*
+   * T2は { hoge?: { piyo: number; } } となる
+   */
+  type T2 = MyPartial<{
+    hoge: {
+      piyo: number;
+    };
+  }>;
+
+/**
+ * 以下のコードで定義されるEventDischargerクラスは、emitメソッドを呼び出すことでイベントを発生させる機能を持っています。
+ * イベントは"start", "stop", "end"の3種類であり、それぞれのイベントを発生させるときはイベントに合ったデータをemitメソッドに渡す必要があります。
+ * 具体的には、"start"イベントに対しては{ user: string }型のデータを、
+ * "stop"イベントに対しては{ user: string; after: number }型のデータを、
+ * そして"end"イベントに対しては{}型のデータを渡さなくてはなりません。
+ * 
+ * 各イベント名に対して必要なデータの型は、EventPayloads型にイベント名: データの型の形でまとめて定義してあります。
+ * いま、emitメソッドが間違ったイベント名やデータに対しては型エラーを出すようにしたいです。
+ * emitメソッドに適切な型を付けてください。
+ * ただし、EventDischargerの汎用性を上げるために、EventDischargerはイベントを定義する型であるEventPayloadsを型引数Eとして受け取るようになっています。
+ * emitは、Eに定義されたイベントを適切に受け付ける必要があります。
+ */
+
+interface EventPayloads {
+    start: {
+      user: string;
+    };
+    stop: {
+      user: string;
+      after: number;
+    };
+    end: {};
+  }
+  
+  class EventDischarger<E> {
+    emit(eventName, payload) {
+      // 省略
+    }
+  }
+  
+  // 使用例
+  const ed = new EventDischarger<EventPayloads>();
+  ed.emit("start", {
+    user: "user1"
+  });
+  ed.emit("stop", {
+    user: "user1",
+    after: 3
+  });
+  ed.emit("end", {});
+  
+  // エラー例
+  ed.emit("start", {
+    user: "user2",
+    after: 0
+  });
+  ed.emit("stop", {
+    user: "user2"
+  });
+  ed.emit("foobar", {
+    foo: 123
+  });
+  
