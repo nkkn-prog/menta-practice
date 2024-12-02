@@ -1,6 +1,5 @@
 
 import { useState } from 'react'
-import { EditForm } from './components/EditForm';
 import './App.css'
 
 export default function Todos() {
@@ -24,6 +23,8 @@ export default function Todos() {
     status: '',
     isEditing: false,
   })
+  const [editInputTitle,setEditInputTitle] = useState('')
+  const [editInputText,setEditInputText] = useState('')
 
   const statuses = ['未着手','進行中','完了']
 
@@ -33,6 +34,14 @@ export default function Todos() {
 
   const reflectText = (event:React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(event.target.value)
+  }
+
+  const reflectEditTitle = (event:React.ChangeEvent<HTMLInputElement>) => {
+    setEditInputTitle(event.target.value)
+  }
+
+  const reflectEditText = (event:React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEditInputText(event.target.value)
   }
 
   // ここからタスクを移動させる処理
@@ -175,9 +184,10 @@ export default function Todos() {
       ...selectedTask,
       isEditing: !selectedTask.isEditing
     });
-  };
 
-  // const updateTask = () => {}
+    setEditInputTitle(selectedTask.title);
+    setEditInputText(selectedTask.content);
+  };
 
   const deleteTask = (index: number, status: string) => {
 
@@ -198,7 +208,36 @@ export default function Todos() {
       newCompletedTasks.splice(index, 1)
       setCompletedTasks(newCompletedTasks)
     }
+  }
 
+  const updateClick = (index:number, status:string) => {
+
+    const setTasksMap = {
+      [statuses[0]]: setNotStartedTasks,
+      [statuses[1]]: setInProgressTasks,
+      [statuses[2]]: setCompletedTasks
+    };
+  
+    const currentTasksMap = {
+      [statuses[0]]: notStartedTasks,
+      [statuses[1]]: inProgressTasks,
+      [statuses[2]]: completedTasks
+    };
+  
+    // 現在のタスクリストと更新関数を取得
+    const setTasks = setTasksMap[status];
+    const currentTasks = currentTasksMap[status];
+  
+    // タスクリストを更新
+    setTasks(currentTasks.map((task, i) => ({
+      ...task,
+      title: i === index ? editInputTitle : task.title,
+      content: i === index ? editInputText : task.content,
+      isEditing: false
+    })));
+
+    setEditInputTitle('');
+    setEditInputText('');
   }
 
 
@@ -224,15 +263,29 @@ export default function Todos() {
       </div>
       <div className='container'>
         <div className='status-box not-started-box'>
-          <p className='status-label'>{statuses[0]}</p>
+          <p className='status-label' style={{color:'#737373'}}>{statuses[0]}</p>
           {/* addしたものをここで出す */}
           {notStartedTasks.map((task, index) => (
             // key属性は最外部の要素に必要
             <div key={task.uuid} className='not-started-item'>
               {task.isEditing ? (
-                <EditForm 
-                  task={editTask}
+                <>
+                <input
+                  type="text"
+                  value={editInputTitle} 
+                  onChange={reflectEditTitle}
+                  style={{height:'20px', marginTop:'10px'}}
                 />
+                <textarea
+                  placeholder="タスクの内容を入力"
+                  value={editInputText} 
+                  onChange={reflectEditText}
+                  style={{width:'95%', marginTop:'10px'}}
+                />
+                <button onClick={() => updateClick(index, statuses[0])}>保存</button>
+                <button onClick={() => deleteTask(index, statuses[0])}>削除</button>
+                <button onClick={() => changeStatusToProgressFromNotStarted(index)}>＞</button>
+              </>
               ) : (
                 <>
                   <p>タイトル：{task.title}</p>
@@ -247,7 +300,7 @@ export default function Todos() {
         </div>
 
         <div className='status-box in-progress-box'>
-          <p className='status-label'>{statuses[1]}</p>
+          <p className='status-label' style={{color:'#5271ff'}}>{statuses[1]}</p>
           {inProgressTasks.map((task, index) => {
             return (
               <div key={task.uuid} className='in-progress-item'>
@@ -265,7 +318,7 @@ export default function Todos() {
         </div>
 
         <div className='status-box completed-box'>
-          <p className='status-label'>{statuses[2]}</p>
+          <p className='status-label' style={{color:'#00bf63'}}>{statuses[2]}</p>
           {completedTasks.map((task, index) => {
             return (
               <div key={task.uuid} className='completed-item'>
