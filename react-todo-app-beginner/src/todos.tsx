@@ -261,6 +261,7 @@ export default function Todos() {
         />
         <button className='primary-btn' onClick={addClick}>add</button>
       </div>
+
       <div className='container'>
         <div className='status-box not-started-box'>
           <p className='status-label' style={{color:'#737373'}}>{statuses[0]}</p>
@@ -270,22 +271,22 @@ export default function Todos() {
             <div key={task.uuid} className='not-started-item'>
               {task.isEditing ? (
                 <>
-                <input
-                  type="text"
-                  value={editInputTitle} 
-                  onChange={reflectEditTitle}
-                  style={{height:'20px', marginTop:'10px'}}
-                />
-                <textarea
-                  placeholder="タスクの内容を入力"
-                  value={editInputText} 
-                  onChange={reflectEditText}
-                  style={{width:'95%', marginTop:'10px'}}
-                />
-                <button onClick={() => updateClick(index, statuses[0])}>保存</button>
-                <button onClick={() => deleteTask(index, statuses[0])}>削除</button>
-                <button onClick={() => changeStatusToProgressFromNotStarted(index)}>＞</button>
-              </>
+                  <input
+                    type="text"
+                    value={editInputTitle} 
+                    onChange={reflectEditTitle}
+                    style={{height:'20px', marginTop:'10px'}}
+                  />
+                  <textarea
+                    placeholder="タスクの内容を入力"
+                    value={editInputText} 
+                    onChange={reflectEditText}
+                    style={{width:'95%', marginTop:'10px'}}
+                  />
+                  <button onClick={() => updateClick(index, statuses[0])}>保存</button>
+                  <button onClick={() => deleteTask(index, statuses[0])}>削除</button>
+                  <button onClick={() => changeStatusToProgressFromNotStarted(index)}>＞</button>
+                </>
               ) : (
                 <>
                   <p>タイトル：{task.title}</p>
@@ -301,37 +302,76 @@ export default function Todos() {
 
         <div className='status-box in-progress-box'>
           <p className='status-label' style={{color:'#5271ff'}}>{statuses[1]}</p>
-          {inProgressTasks.map((task, index) => {
-            return (
-              <div key={task.uuid} className='in-progress-item'>
-                <p>{task.title}</p>
-                <p>{task.content}</p>
-                <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
-                {/* ここに編集ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置 */}
-                <button>{task.isEditing ? '保存': '編集'}</button>
-                {/* ここに削除ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置*/}
-                <button onClick={() => deleteTask(index, statuses[1])}>削除</button>
-                <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
-              </div>
-            )
-          })}
+          {inProgressTasks.map((task, index) => (
+            // key属性は最外部の要素に必要
+            <div key={task.uuid} className='not-started-item'>
+              {task.isEditing ? (
+                <>
+                  <input
+                    type="text"
+                    value={editInputTitle} 
+                    onChange={reflectEditTitle}
+                    style={{height:'20px', marginTop:'10px'}}
+                  />
+                  <textarea
+                    placeholder="タスクの内容を入力"
+                    value={editInputText} 
+                    onChange={reflectEditText}
+                    style={{width:'95%', marginTop:'10px'}}
+                  />
+                  <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
+                  <button onClick={() => updateClick(index, statuses[1])}>保存</button>
+                  <button onClick={() => deleteTask(index, statuses[1])}>削除</button>
+                  <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
+                </>
+              ) : (
+                <>
+                  <p>タイトル：{task.title}</p>
+                  <p>内容：{task.content}</p>
+                  <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
+                  <button onClick={() => editClick(index, statuses[1])}>編集</button>
+                  <button onClick={() => deleteTask(index, statuses[1])}>削除</button>
+                  <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
+                </>
+              )}
+            </div>
+          ))}
         </div>
 
         <div className='status-box completed-box'>
           <p className='status-label' style={{color:'#00bf63'}}>{statuses[2]}</p>
-          {completedTasks.map((task, index) => {
-            return (
-              <div key={task.uuid} className='completed-item'>
-                <p>{task.title}</p>
-                <p>{task.content}</p>
-                <button onClick={()=>changeStatusToProgressFromCompleted(index)}>＜</button>
-                {/* ここに編集ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置 */}
-                <button>編集</button>
-                {/* ここに削除ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置*/}
-                <button onClick={() => deleteTask(index, statuses[2])}>削除</button>
-              </div>
-            )
-          })}
+          {completedTasks.map((task, index) => (
+            // key属性は最外部の要素に必要
+            <div key={task.uuid} className='not-started-item'>
+              {task.isEditing ? (
+                <>
+                  <input
+                    type="text"
+                    value={editInputTitle} 
+                    onChange={reflectEditTitle}
+                    style={{height:'20px', marginTop:'10px'}}
+                  />
+                  <textarea
+                    placeholder="タスクの内容を入力"
+                    value={editInputText} 
+                    onChange={reflectEditText}
+                    style={{width:'95%', marginTop:'10px'}}
+                  />
+                  <button onClick={()=>changeStatusToProgressFromCompleted(index)}>＜</button>
+                  <button onClick={() => updateClick(index, statuses[2])}>保存</button>
+                  <button onClick={() => deleteTask(index, statuses[2])}>削除</button>
+                </>
+              ) : (
+                <>
+                  <p>タイトル：{task.title}</p>
+                  <p>内容：{task.content}</p>
+                  <button onClick={()=>changeStatusToProgressFromCompleted(index)}>＜</button>
+                  <button onClick={() => editClick(index, statuses[2])}>編集</button>
+                  <button onClick={() => deleteTask(index, statuses[2])}>削除</button>
+                </>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </>
