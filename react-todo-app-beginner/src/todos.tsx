@@ -184,9 +184,6 @@ export default function Todos() {
       ...selectedTask,
       isEditing: !selectedTask.isEditing
     });
-
-    setEditInputTitle(selectedTask.title);
-    setEditInputText(selectedTask.content);
   };
 
   const deleteTask = (index: number, status: string) => {
@@ -210,7 +207,7 @@ export default function Todos() {
     }
   }
 
-  const updateClick = (index:number, status:string) => {
+  const updateClick = (status:string) => {
 
     const setTasksMap = {
       [statuses[0]]: setNotStartedTasks,
@@ -229,12 +226,17 @@ export default function Todos() {
     const currentTasks = currentTasksMap[status];
   
     // タスクリストを更新
-    setTasks(currentTasks.map((task, i) => ({
-      ...task,
-      title: i === index ? editInputTitle : task.title,
-      content: i === index ? editInputText : task.content,
-      isEditing: false
-    })));
+    // editTaskを使わなければデプロイできなかったので、三項演算子ではなくif文で書いている
+    setTasks(currentTasks.map(task => {
+      if (task.uuid === editTask.uuid) {
+        return {
+          ...task,
+          title: editInputTitle,
+          content: editInputText,
+        };
+      }
+      return task;
+    }));
 
     setEditInputTitle('');
     setEditInputText('');
@@ -283,7 +285,7 @@ export default function Todos() {
                     onChange={reflectEditText}
                     style={{width:'95%', marginTop:'10px'}}
                   />
-                  <button onClick={() => updateClick(index, statuses[0])}>保存</button>
+                  <button onClick={() => updateClick(statuses[0])}>保存</button>
                   <button onClick={() => deleteTask(index, statuses[0])}>削除</button>
                   <button onClick={() => changeStatusToProgressFromNotStarted(index)}>＞</button>
                 </>
@@ -320,7 +322,7 @@ export default function Todos() {
                     style={{width:'95%', marginTop:'10px'}}
                   />
                   <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
-                  <button onClick={() => updateClick(index, statuses[1])}>保存</button>
+                  <button onClick={() => updateClick(statuses[1])}>保存</button>
                   <button onClick={() => deleteTask(index, statuses[1])}>削除</button>
                   <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
                 </>
@@ -358,7 +360,7 @@ export default function Todos() {
                     style={{width:'95%', marginTop:'10px'}}
                   />
                   <button onClick={()=>changeStatusToProgressFromCompleted(index)}>＜</button>
-                  <button onClick={() => updateClick(index, statuses[2])}>保存</button>
+                  <button onClick={() => updateClick(statuses[2])}>保存</button>
                   <button onClick={() => deleteTask(index, statuses[2])}>削除</button>
                 </>
               ) : (
