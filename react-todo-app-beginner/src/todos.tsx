@@ -143,43 +143,64 @@ export default function Todos() {
     }
   }
 
-  const editClick = (index:number,  status:string) => {
+  const editClick = (index: number, status: string) => {
 
-      // ステータスごとのタスクを取得し、選択したタスクを設定する。
-      const taskListMap = {
+    const setTasksMap = {
+      [statuses[0]]: setNotStartedTasks,
+      [statuses[1]]: setInProgressTasks,
+      [statuses[2]]: setCompletedTasks
+    };
+  
+    const currentTasksMap = {
       [statuses[0]]: notStartedTasks,
       [statuses[1]]: inProgressTasks,
       [statuses[2]]: completedTasks
-      };
-
-      // 選択されたタスクのステータスに応じて、対応する配列を更新
-      const tasks = taskListMap[status];
-
-      // 選択されたタスクのisEditingをtrueに、他のタスクをfalseに設定
-      const updatedTasks = tasks.map((task, i) => ({
-        ...task,
-        isEditing: i === index
-      }));
-
-      if (status[0] === status) {
-        setNotStartedTasks(updatedTasks);
-      }
-      if (status[1] === status) {
-        setInProgressTasks(updatedTasks);
-      }
-      if (status[2] === status) {
-        setCompletedTasks(updatedTasks);
-      }
-
-      // 該当するタスクを取得
-      const selectedTask = [...tasks][index];
-      setEditTask(selectedTask);
-      console.log(selectedTask)
-  }
+    };
+  
+    // 現在のタスクリストと更新関数を取得
+    const setTasks = setTasksMap[status];
+    const currentTasks = currentTasksMap[status];
+  
+    // 選択されたタスクを取得
+    const selectedTask = currentTasks[index];
+  
+    // タスクリストを更新
+    setTasks(currentTasks.map((task, i) => ({
+      ...task,
+      isEditing: i === index ? !task.isEditing : false
+    })));
+  
+    // 編集用のタスクを設定
+    setEditTask({
+      ...selectedTask,
+      isEditing: !selectedTask.isEditing
+    });
+  };
 
   // const updateTask = () => {}
 
-  // const deleteTask = () => {}
+  const deleteTask = (index: number, status: string) => {
+
+    if(status === statuses[0]){
+      const newNotStartedTasks = [...notStartedTasks];
+      newNotStartedTasks.splice(index, 1)
+      setNotStartedTasks(newNotStartedTasks)
+    }
+
+    if(status === statuses[1]){
+      const newInProgressTasks = [...inProgressTasks]
+      newInProgressTasks.splice(index, 1)
+      setInProgressTasks(newInProgressTasks)
+    }
+
+    if(status === statuses[2]){
+      const newCompletedTasks = [...completedTasks]
+      newCompletedTasks.splice(index, 1)
+      setCompletedTasks(newCompletedTasks)
+    }
+
+  }
+
 
 
 
@@ -208,7 +229,7 @@ export default function Todos() {
           {notStartedTasks.map((task, index) => (
             // key属性は最外部の要素に必要
             <div key={task.uuid}>
-              {editTask.isEditing ? (
+              {task.isEditing ? (
                 <EditForm 
                   task={editTask}
                 />
@@ -218,7 +239,7 @@ export default function Todos() {
                   <p>{task.content}</p>
                   <button onClick={() => changeStatusToProgressFromNotStarted(index)}>＞</button>
                   <button onClick={() => editClick(index, statuses[0])}>編集</button>
-                  <button>削除</button>
+                  <button onClick={() => deleteTask(index, statuses[0])}>削除</button>
                 </>
               )}
             </div>
@@ -235,9 +256,9 @@ export default function Todos() {
                 <p>{task.content}</p>
                 <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
                 {/* ここに編集ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置 */}
-                <button>{editTask.isEditing ? '保存': '編集'}</button>
+                <button>{task.isEditing ? '保存': '編集'}</button>
                 {/* ここに削除ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置*/}
-                <button>削除</button>
+                <button onClick={() => deleteTask(index, statuses[1])}>削除</button>
               </div>
             )
           })}
@@ -254,7 +275,7 @@ export default function Todos() {
                 {/* ここに編集ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置 */}
                 <button>編集</button>
                 {/* ここに削除ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置*/}
-                <button>削除</button>
+                <button onClick={() => deleteTask(index, statuses[2])}>削除</button>
               </div>
             )
           })}
