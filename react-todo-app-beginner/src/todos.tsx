@@ -1,6 +1,7 @@
 
 import { useState } from 'react'
 import './App.css'
+import { EditForm } from './components/EditForm';
 
 export default function Todos() {
   type Task = {
@@ -256,25 +257,21 @@ export default function Todos() {
           {notStartedTasks.map((task, index) => (
             // key属性は最外部の要素に必要
             <div key={task.uuid} className='not-started-item'>
-              {task.isEditing ? (
+              {task.isEditing ?(
                 <>
-                  <input
-                    type="text"
-                    value={editInputTitle} 
-                    onChange={reflectEditTitle}
-                    style={{height:'20px', marginTop:'10px'}}
+                  <EditForm 
+                  editInputTitle={editInputTitle}
+                  editInputText={editInputText}
+                  reflectEditTitle={reflectEditTitle}
+                  reflectEditText={reflectEditText}
                   />
-                  <textarea
-                    placeholder="タスクの内容を入力"
-                    value={editInputText} 
-                    onChange={reflectEditText}
-                    style={{width:'95%', marginTop:'10px'}}
-                  />
+                  {/* ボタンもEditFormに入れようと思ったが、タスク移動の関数の受け渡しをどうするか悩んだため、コンポーネント内には含めていない */}
                   <button onClick={() => updateClick(index, statuses[0])}>保存</button>
                   <button onClick={() => deleteTask(index, statuses[0])}>削除</button>
                   <button onClick={() => changeStatusToProgressFromNotStarted(index)}>＞</button>
                 </>
-              ) : (
+              )
+              : (
                 <>
                   <p>タイトル：{task.title}</p>
                   <p>内容：{task.content}</p>
@@ -294,17 +291,11 @@ export default function Todos() {
             <div key={task.uuid} className='in-progress-item'>
               {task.isEditing ? (
                 <>
-                  <input
-                    type="text"
-                    value={editInputTitle} 
-                    onChange={reflectEditTitle}
-                    style={{height:'20px', marginTop:'10px'}}
-                  />
-                  <textarea
-                    placeholder="タスクの内容を入力"
-                    value={editInputText} 
-                    onChange={reflectEditText}
-                    style={{width:'95%', marginTop:'10px'}}
+                  <EditForm 
+                  editInputTitle={editInputTitle}
+                  editInputText={editInputText}
+                  reflectEditTitle={reflectEditTitle}
+                  reflectEditText={reflectEditText}
                   />
                   <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
                   <button onClick={() => updateClick(index, statuses[1])}>保存</button>
@@ -318,6 +309,7 @@ export default function Todos() {
                   <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
                   <button onClick={() => editClick(index, statuses[1])}>編集</button>
                   <button onClick={() => deleteTask(index, statuses[1])}>削除</button>
+                  <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
                 </>
               )}
             </div>
@@ -331,17 +323,11 @@ export default function Todos() {
             <div key={task.uuid} className='completed-item'>
               {task.isEditing ? (
                 <>
-                  <input
-                    type="text"
-                    value={editInputTitle} 
-                    onChange={reflectEditTitle}
-                    style={{height:'20px', marginTop:'10px'}}
-                  />
-                  <textarea
-                    placeholder="タスクの内容を入力"
-                    value={editInputText} 
-                    onChange={reflectEditText}
-                    style={{width:'95%', marginTop:'10px'}}
+                  <EditForm 
+                  editInputTitle={editInputTitle}
+                  editInputText={editInputText}
+                  reflectEditTitle={reflectEditTitle}
+                  reflectEditText={reflectEditText}
                   />
                   <button onClick={()=>changeStatusToProgressFromCompleted(index)}>＜</button>
                   <button onClick={() => updateClick(index, statuses[2])}>保存</button>
