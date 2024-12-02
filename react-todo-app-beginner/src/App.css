@@ -37,13 +37,45 @@
 }
 
 .status-box {
-  margin-top: 100px;
-  border: solid 1px #000;
-  height: 50vh;
+  margin-top: 50px;
   border-radius: 5px;
+  height: 800px;
 }
+
+.in-progress-box {
+  border-right: 1px #737373 solid;
+  border-left: 1px #737373 solid;
+}
+
 .status-label {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
+}
+
+.not-started-item {
+  width: 80%;
+  margin: 0 auto 20px auto;
+  background-color: #73737345;
+  border: 1px #737373 solid;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.in-progress-item {
+  width: 80%;
+  background-color: #5271ff45;
+  border: 1px #5271ff solid;
+  margin: 0 auto 20px auto;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.completed-item{
+  width: 80%;
+  background-color: #00bf6345;
+  border: 1px #00bf63 solid;
+  margin: 0 auto 20px auto;
+  padding: 5px;
+  border-radius: 5px;
 }
