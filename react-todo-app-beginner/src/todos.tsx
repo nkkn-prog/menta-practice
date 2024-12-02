@@ -235,11 +235,11 @@ export default function Todos() {
                 />
               ) : (
                 <>
-                  <p>{task.title}</p>
-                  <p>{task.content}</p>
-                  <button onClick={() => changeStatusToProgressFromNotStarted(index)}>＞</button>
+                  <p>タイトル：{task.title}</p>
+                  <p>内容：{task.content}</p>
                   <button onClick={() => editClick(index, statuses[0])}>編集</button>
                   <button onClick={() => deleteTask(index, statuses[0])}>削除</button>
+                  <button onClick={() => changeStatusToProgressFromNotStarted(index)}>＞</button>
                 </>
               )}
             </div>
@@ -251,14 +251,14 @@ export default function Todos() {
           {inProgressTasks.map((task, index) => {
             return (
               <div key={task.uuid}>
-                <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
                 <p>{task.title}</p>
                 <p>{task.content}</p>
-                <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
+                <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
                 {/* ここに編集ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置 */}
                 <button>{task.isEditing ? '保存': '編集'}</button>
                 {/* ここに削除ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置*/}
                 <button onClick={() => deleteTask(index, statuses[1])}>削除</button>
+                <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
               </div>
             )
           })}
@@ -269,9 +269,9 @@ export default function Todos() {
           {completedTasks.map((task, index) => {
             return (
               <div key={task.uuid}>
-                <button onClick={()=>changeStatusToProgressFromCompleted(index)}>＜</button>
                 <p>{task.title}</p>
                 <p>{task.content}</p>
+                <button onClick={()=>changeStatusToProgressFromCompleted(index)}>＜</button>
                 {/* ここに編集ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置 */}
                 <button>編集</button>
                 {/* ここに削除ボタン/本当はfontawesomeを導入したかったが、ESLintの競合が発生して導入できなかったので、以下のようなボタンを設置*/}
