@@ -16,13 +16,6 @@ export default function Todos() {
   const [notStartedTasks, setNotStartedTasks] = useState<Task[]>([])
   const [inProgressTasks, setInProgressTasks] = useState<Task[]>([])
   const [completedTasks, setCompletedTasks] = useState<Task[]>([])
-  const [editTask, setEditTask] = useState<Task>({
-    uuid: '',
-    title: '',
-    content: '',
-    status: '',
-    isEditing: false,
-  })
   const [editInputTitle,setEditInputTitle] = useState('')
   const [editInputText,setEditInputText] = useState('')
 
@@ -178,12 +171,9 @@ export default function Todos() {
       ...task,
       isEditing: i === index ? !task.isEditing : false
     })));
-  
-    // 編集用のタスクを設定
-    setEditTask({
-      ...selectedTask,
-      isEditing: !selectedTask.isEditing
-    });
+
+    setEditInputTitle(selectedTask.title);
+    setEditInputText(selectedTask.content);
   };
 
   const deleteTask = (index: number, status: string) => {
@@ -207,7 +197,7 @@ export default function Todos() {
     }
   }
 
-  const updateClick = (status:string) => {
+  const updateClick = (index:number, status:string) => {
 
     const setTasksMap = {
       [statuses[0]]: setNotStartedTasks,
@@ -226,17 +216,12 @@ export default function Todos() {
     const currentTasks = currentTasksMap[status];
   
     // タスクリストを更新
-    // editTaskを使わなければデプロイできなかったので、三項演算子ではなくif文で書いている
-    setTasks(currentTasks.map(task => {
-      if (task.uuid === editTask.uuid) {
-        return {
-          ...task,
-          title: editInputTitle,
-          content: editInputText,
-        };
-      }
-      return task;
-    }));
+    setTasks(currentTasks.map((task, i) => ({
+      ...task,
+      title: i === index ? editInputTitle : task.title,
+      content: i === index ? editInputText : task.content,
+      isEditing: false
+    })));
 
     setEditInputTitle('');
     setEditInputText('');
@@ -285,7 +270,7 @@ export default function Todos() {
                     onChange={reflectEditText}
                     style={{width:'95%', marginTop:'10px'}}
                   />
-                  <button onClick={() => updateClick(statuses[0])}>保存</button>
+                  <button onClick={() => updateClick(index, statuses[0])}>保存</button>
                   <button onClick={() => deleteTask(index, statuses[0])}>削除</button>
                   <button onClick={() => changeStatusToProgressFromNotStarted(index)}>＞</button>
                 </>
@@ -306,7 +291,7 @@ export default function Todos() {
           <p className='status-label' style={{color:'#5271ff'}}>{statuses[1]}</p>
           {inProgressTasks.map((task, index) => (
             // key属性は最外部の要素に必要
-            <div key={task.uuid} className='not-started-item'>
+            <div key={task.uuid} className='in-progress-item'>
               {task.isEditing ? (
                 <>
                   <input
@@ -322,7 +307,7 @@ export default function Todos() {
                     style={{width:'95%', marginTop:'10px'}}
                   />
                   <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
-                  <button onClick={() => updateClick(statuses[1])}>保存</button>
+                  <button onClick={() => updateClick(index, statuses[1])}>保存</button>
                   <button onClick={() => deleteTask(index, statuses[1])}>削除</button>
                   <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
                 </>
@@ -333,7 +318,6 @@ export default function Todos() {
                   <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
                   <button onClick={() => editClick(index, statuses[1])}>編集</button>
                   <button onClick={() => deleteTask(index, statuses[1])}>削除</button>
-                  <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
                 </>
               )}
             </div>
@@ -344,7 +328,7 @@ export default function Todos() {
           <p className='status-label' style={{color:'#00bf63'}}>{statuses[2]}</p>
           {completedTasks.map((task, index) => (
             // key属性は最外部の要素に必要
-            <div key={task.uuid} className='not-started-item'>
+            <div key={task.uuid} className='completed-item'>
               {task.isEditing ? (
                 <>
                   <input
@@ -360,7 +344,7 @@ export default function Todos() {
                     style={{width:'95%', marginTop:'10px'}}
                   />
                   <button onClick={()=>changeStatusToProgressFromCompleted(index)}>＜</button>
-                  <button onClick={() => updateClick(statuses[2])}>保存</button>
+                  <button onClick={() => updateClick(index, statuses[2])}>保存</button>
                   <button onClick={() => deleteTask(index, statuses[2])}>削除</button>
                 </>
               ) : (
