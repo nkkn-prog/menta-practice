@@ -223,12 +223,12 @@ export default function Todos() {
         <button className='primary-btn' onClick={addClick}>add</button>
       </div>
       <div className='container'>
-        <div className='status-box'>
+        <div className='status-box not-started-box'>
           <p className='status-label'>{statuses[0]}</p>
           {/* addしたものをここで出す */}
           {notStartedTasks.map((task, index) => (
             // key属性は最外部の要素に必要
-            <div key={task.uuid}>
+            <div key={task.uuid} className='not-started-item'>
               {task.isEditing ? (
                 <EditForm 
                   task={editTask}
@@ -246,11 +246,11 @@ export default function Todos() {
           ))}
         </div>
 
-        <div className='status-box'>
+        <div className='status-box in-progress-box'>
           <p className='status-label'>{statuses[1]}</p>
           {inProgressTasks.map((task, index) => {
             return (
-              <div key={task.uuid}>
+              <div key={task.uuid} className='in-progress-item'>
                 <p>{task.title}</p>
                 <p>{task.content}</p>
                 <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
@@ -264,11 +264,11 @@ export default function Todos() {
           })}
         </div>
 
-        <div className='status-box'>
+        <div className='status-box completed-box'>
           <p className='status-label'>{statuses[2]}</p>
           {completedTasks.map((task, index) => {
             return (
-              <div key={task.uuid}>
+              <div key={task.uuid} className='completed-item'>
                 <p>{task.title}</p>
                 <p>{task.content}</p>
                 <button onClick={()=>changeStatusToProgressFromCompleted(index)}>＜</button>
