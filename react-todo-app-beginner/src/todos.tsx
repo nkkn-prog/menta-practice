@@ -309,7 +309,7 @@ export default function Todos() {
                   <button onClick={()=>changeStatusToNotStarted(index)}>＜</button>
                   <button onClick={() => editClick(index, statuses[1])}>編集</button>
                   <button onClick={() => deleteTask(index, statuses[1])}>削除</button>
-                  <button onClick={()=>changeStatusToCompleted(index)}>＞</button>
+                  
                 </>
               )}
             </div>
